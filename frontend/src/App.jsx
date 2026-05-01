@@ -9,6 +9,7 @@ function App() {
     <Box minH={"100vh"}>
       <Navbar/>
       <Routes>
+        <Route path="/" element={<Homepage/>}/>
         <Route path="/Homepage" element={<Homepage/>}/>
         <Route path="/CreateProduct" element={<CreateProduct/>}/>
       </Routes>
