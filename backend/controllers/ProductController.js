@@ -4,7 +4,6 @@ import mongoose from 'mongoose';
 export const createproducts = async (req, res) => {
   const product = req.body;
   // Here you would typically save the product to the database
-  // For demonstration, we'll just return the product back in the response
   if(!product.name || !product.price || !product.Image || !product.description) {
     return res.status(400).json({ error: 'All fields are required' });
   }
@@ -28,28 +27,34 @@ export const getproducts = async (req, res) => {
 };
 
 
-export const deleteproducts =async (req, res) => {
-    const { id } = req.params;
-    try {
-      const deletedProduct = await Product.findByIdAndDelete(id);
-      res.status(200).json({deletedProduct, Message: 'Product deleted successfully' });
-    } catch (error) {
-      res.status(404).json({ error: 'Product not found' });
+export const deleteproducts = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const deletedProduct = await Product.findByIdAndDelete(id);
+    if (!deletedProduct) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
     }
-  };
+    res.status(200).json({ success: true, deletedProduct, message: 'Product deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ success: false, error: 'Server Error' });
+  }
+};
 
 
-  export const updateproducts = async (req, res) => {
+export const updateproducts = async (req, res) => {
   const { id } = req.params;
   const updatedData = req.body;
 
   try {
-    const updatedProduct = await Product.findByIdAndUpdate(id, updatedData, { new: true });
-    if (!mongoose.Types.ObjectId.isValid(id) || !updatedProduct) {
-      return res.status(404).json({ success: false, Message: 'Invalid product ID' });
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(404).json({ success: false, message: 'Invalid product ID' });
     }
-    res.status(200).json({ updatedProduct, Message: 'Product updated successfully' });
+    const updatedProduct = await Product.findByIdAndUpdate(id, updatedData, { new: true });
+    if (!updatedProduct) {
+      return res.status(404).json({ success: false, message: 'Product not found' });
+    }
+    res.status(200).json({ success: true, updatedProduct, message: 'Product updated successfully' });
   } catch (error) {
-    res.status(500).json({ error: 'Failed to update product' });
+    res.status(500).json({ success: false, error: 'Failed to update product' });
   }
 };

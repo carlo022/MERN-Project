@@ -8,11 +8,13 @@ dotenv.config();
 const app = express();
 app.use(express.json()); //allows us to parse JSON bodies in requests
 
+const PORT = process.env.PORT;
+
 app.use("/api/products", productRoutes); // Use the product routes for /api/products endpoints
 
-app.listen(5000, () => {
+app.listen(PORT, () => {
   connectDB();
-  console.log('Server is running on port http://localhost:5000');
+  console.log('Server is running on port http://localhost:' + PORT);
 });
 
 
